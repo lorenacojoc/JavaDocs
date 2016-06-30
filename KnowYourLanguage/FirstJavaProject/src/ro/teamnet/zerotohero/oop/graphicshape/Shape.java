@@ -12,7 +12,7 @@ public class Shape extends AbstractShape implements ShapeBehaviour {
     protected float saturation;
 
     public int getColor() {
-        return color;
+        return this.color;
     }
 
     public void setColor(int color) {
@@ -20,7 +20,7 @@ public class Shape extends AbstractShape implements ShapeBehaviour {
     }
 
     public float getSaturation() {
-        return saturation;
+        return this.saturation;
     }
 
     public void setSaturation(float saturation) {

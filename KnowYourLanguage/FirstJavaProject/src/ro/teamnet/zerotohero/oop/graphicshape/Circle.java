@@ -1,6 +1,7 @@
 package ro.teamnet.zerotohero.oop.graphicshape;
 import java.lang.Math;
 
+
 /**
  * Created by Lorena on 6/30/2016.
  */
@@ -8,10 +9,10 @@ public class Circle extends Shape {
 
     private int xPos,yPos,radius;
 
-    private Circle(){
-        xPos = 12;
-        yPos = 7;
-        radius = 10;
+    public Circle(){
+        this.xPos = 12;
+        this.yPos = 7;
+        this.radius = 10;
     };
 
     public Circle(int posx){
@@ -19,14 +20,14 @@ public class Circle extends Shape {
     };
 
     public Circle(int xpos, int ypos){
-        xPos = xpos;
-        yPos = ypos;
+        this.xPos = xpos;
+        this.yPos = ypos;
     };
 
     public Circle(int xpos, int ypos, int radiuss){
-        xPos = xpos;
-        yPos = ypos;
-        radius = radiuss;
+        this.xPos = xpos;
+        this.yPos = ypos;
+        this.radius = radiuss;
 
     };
 
@@ -54,12 +55,6 @@ public class Circle extends Shape {
         System.out.println("The saturation is now" + aSaturation);
     };
 
-    public void getAreaDef(){
-        Circle aCircle = new Circle();
-        fillColor();
-        fillColor(color);
-        fillColor(saturation);
-    };
 
 }
 

@@ -8,8 +8,8 @@ import ro.teamnet.zerotohero.oop.graphicshape.Shape;
 public class Square extends Shape {
     private int side;
 
-    Square(int initialSide){
-        side = initialSide;
+    public Square(int initialSide){
+        this.side = initialSide;
     };
 
     public double area (){
