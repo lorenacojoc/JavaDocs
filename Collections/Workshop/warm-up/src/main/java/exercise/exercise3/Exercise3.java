@@ -5,6 +5,7 @@ import java.lang.String;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.TreeSet;
+import java.util.Comparator;
 
 
 
@@ -33,24 +34,23 @@ public class Exercise3 {
         listToAdd = l;
     }
 
-    public void addElementsToSets(){
+    public void addElementsToSets() {
 
         Set<String> firstSet = new HashSet<String>();
         Set<String> secondSet = new HashSet<String>();
         Set<String> thirdSet = new HashSet<String>();
         Set<String> treeSet = new TreeSet<String>();
-        Set<String> treesetCompare = new TreeSet<String>();
 
 
         System.out.println("The elements that will be added to the Sets: ");
         // TODO Exercise #3 a) Check the content of the elements you will add into the Set
 
-        for( int iter = 0; iter< listToAdd.size();iter++){
+        for (int iter = 0; iter < listToAdd.size(); iter++) {
             System.out.println(listToAdd.get(iter));
         }
 
         // TODO Exercise #3 b) add the elements from listToAdd to the Sets
-        for(String elem : listToAdd){
+        for (String elem : listToAdd) {
             firstSet.add(elem);
             secondSet.add(elem);
             thirdSet.add(elem);
@@ -59,16 +59,16 @@ public class Exercise3 {
 
         // TODO Exercise #3 c) Check the content of the Sets
         System.out.println("\nThe elements contained in the first Set: ");
-        for(String elem: firstSet){
+        for (String elem : firstSet) {
             System.out.println(elem);
         }
 
         System.out.println("\nThe elements contained in the second Set: ");
-        for(String elem: secondSet){
+        for (String elem : secondSet) {
             System.out.println(elem);
         }
         System.out.println("\nThe elements contained in the third Set: ");
-        for(String elem: thirdSet){
+        for (String elem : thirdSet) {
             System.out.println(elem);
         }
 
@@ -76,17 +76,46 @@ public class Exercise3 {
 
         // TODO Exercise #3 d) Add to the TreeSet two elements that already exist in the Set
         // TODO Exercise #3 d) and print again the TreeSet. What do you see?
-        for(String elem : listToAdd){
+        for (String elem : listToAdd) {
             treeSet.add(elem);
         }
         treeSet.add(listToAdd.get(0));
 
-        for(String elem: treeSet){
+        for (String elem : treeSet) {
             System.out.println(elem);
         }
 
-        treesetCompare.add(listToAdd.get(0));
-        treesetCompare = (TreeSet)treeSet.comparator();
 
     }
+
+    public static void main(String[] args) {
+        Set<String> treeset = new TreeSet<String>(new myComp());
+        treeset.add("RED");
+        treeset.add("BLUE");
+        treeset.add("yellow");
+        System.out.println(treeset);
+
+    }
+
 }
+
+    class myComp implements Comparator<String>{
+
+
+        public int compare(String e1, String e2) {
+            return e1.compareTo(e2);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
