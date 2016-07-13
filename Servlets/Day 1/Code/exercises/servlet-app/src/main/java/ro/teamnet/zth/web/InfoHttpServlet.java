@@ -30,8 +30,10 @@ public class InfoHttpServlet extends HttpServlet {
         Map parameters = req.getParameterMap();
 
 
-        String response = "<table>" + "<tr>" + "<th>Header</th>" +
-                "<th>value</th>" +
+        String response = " <table border = \"1px solid black\"> "
+                + "<tr>" +
+                "<th>Header name</th>" +
+                "<th>value name</th>" +
                 "</tr>";
         while (headers.hasMoreElements()) {
             String headerName = (String) headers.nextElement();
@@ -39,7 +41,7 @@ public class InfoHttpServlet extends HttpServlet {
 
             response += "<tr>" +
                     "<td>" + headerName + "</td>" +
-                    "<td width=\"30%\">" + headerValue + "</td>" +
+                    "<td>" + headerValue + "</td>" +
                     "</tr>";
         }
 
@@ -95,6 +97,5 @@ public class InfoHttpServlet extends HttpServlet {
     }
 
 }
-
 
 
