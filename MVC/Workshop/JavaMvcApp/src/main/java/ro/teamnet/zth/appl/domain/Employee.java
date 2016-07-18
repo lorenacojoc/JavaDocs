@@ -177,6 +177,11 @@ public class Employee {
     }
 
     @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (firstName != null ? firstName.hashCode() : 0);

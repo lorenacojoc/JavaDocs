@@ -1,9 +1,14 @@
 package ro.teamnet.zth;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import ro.teamnet.zth.api.annotations.MyController;
 import ro.teamnet.zth.api.annotations.MyRequestMethod;
+import ro.teamnet.zth.api.annotations.MyRequestParam;
 import ro.teamnet.zth.appl.controller.DepartmentController;
 import ro.teamnet.zth.appl.controller.EmployeeController;
+import ro.teamnet.zth.appl.domain.Employee;
 import ro.teamnet.zth.fmk.AnnotationScanUtils;
 import ro.teamnet.zth.fmk.MethodAttributes;
 
@@ -15,9 +20,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.lang.reflect.Parameter;
+import java.util.*;
 
 /**
  * Created by Lorena on 7/14/2016.
@@ -45,13 +49,14 @@ public class DispatcherServlet extends HttpServlet {
                             String methodUrlPath = methodAnnotation.urlPath();
 
                             //construiesc cheia pt HashMap
-                            String urlPath = controllerUrlPath + methodUrlPath;
+                            String urlPath = controllerUrlPath + methodUrlPath + methodAnnotation.methodType();
 
                             //construiesc valoarea
                             MethodAttributes methodAttributes = new MethodAttributes();
                             methodAttributes.setControllerClass(controller.getName());
                             methodAttributes.setMethodType(methodAnnotation.methodType());
                             methodAttributes.setMethodName(method.getName());
+                            methodAttributes.setParameterTypes(method.getParameterTypes());
 
                             allowedMethods.put(urlPath, methodAttributes);
                         }
@@ -77,11 +82,22 @@ public class DispatcherServlet extends HttpServlet {
         dispatchReply("POST",req,resp);
     }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        dispatchReply("PUT", req,resp);
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        super.doDelete(req, resp);
+        dispatchReply("DELETE",req,resp);
+    }
+
     public void dispatchReply(String identif ,HttpServletRequest request,HttpServletResponse response){
 
         Object result = null;
         try {
-            result = dispatch(request, response);}
+            result = dispatch(identif,request, response);}
         catch (Exception e){
             sendExceptionError(e,request,response);
         }
@@ -99,16 +115,22 @@ public class DispatcherServlet extends HttpServlet {
     private void reply(Object result, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
             PrintWriter printWriter = response.getWriter();
-            printWriter.printf(result.toString());
+            //printWriter.printf(result.toString());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            String object = (String)objectMapper.writeValueAsString(result);
+            EmployeeController empl = new EmployeeController();
+            printWriter.printf(object);
+
 
     }
 
-    private Object dispatch(HttpServletRequest request, HttpServletResponse response) {
+    private Object dispatch(String methodtype, HttpServletRequest request, HttpServletResponse response) {
 
         EmployeeController employee = new EmployeeController();
         DepartmentController dep = new DepartmentController();
 
-        String pathInfo = request.getPathInfo();
+        String pathInfo = request.getPathInfo() + methodtype;
 //        if(pathInfo.startsWith("/employees")){
 //            String result = employee.getAllEmployees();
 //            return result;
@@ -122,15 +144,37 @@ public class DispatcherServlet extends HttpServlet {
         if(methodAttributes == null)
         {
             //nu putem procesa url-ul
-            return  "hello";
+           return "no attributes";
         }
 
         String controllerName = methodAttributes.getControllerClass();
         try {
             Class<?> controllerClass = Class.forName(controllerName);
             Object controllerInstance = controllerClass.newInstance();
-            Method method = controllerClass.getMethod(methodAttributes.getMethodName());
-            Object result = method.invoke(controllerInstance);
+            Method method = controllerClass.getMethod(methodAttributes.getMethodName(),
+                    methodAttributes.getParameterTypes());
+            List<Object> paramValues = new ArrayList<>();
+            Parameter[] params = method.getParameters();
+            for (Parameter param : params){
+                if(param.isAnnotationPresent(MyRequestParam.class)){
+                MyRequestParam annotation = param.getAnnotation(MyRequestParam.class);
+                String name = annotation.name();
+                    String  requestParamValue = request.getParameter(name);
+                    Class<?> type = param.getType();
+                    Object requestParamObject;
+                    if (type.equals(String.class)){
+                        requestParamObject = requestParamValue;
+                    }else {
+                        requestParamObject = new ObjectMapper().readValue(requestParamValue,type);
+                    }
+                    paramValues.add(requestParamObject);
+
+                }
+            }
+
+            request.getParameter("id");
+            Object result = method.invoke(controllerInstance, paramValues.toArray());
+
 
             return result;
 
@@ -144,9 +188,17 @@ public class DispatcherServlet extends HttpServlet {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return "hello";
+        return "";
     }
+
+
 
 
 }
